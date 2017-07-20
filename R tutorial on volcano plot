@@ -1,1 +1,29 @@
 dat1 = read.csv(file.choose())
+
+## Upon choosing the file have two columns. 
+## One is the logpvalue column which represents the -log10 of the pvalue and the other is a diff column as the log2 of the fold change
+
+
+plot(dat1$diff, dat1$logpvalue, main="Volcano Plot",xlab="Log2 of Fold Change", ylab="-Log 10 of Pvalue", pch=19, cex=0.5)
+
+points(dat1$diff[dat1$diff< -1 & dat1$logpvalue >1], dat1$logpvalue[dat1$diff< -1 & dat1$logpvalue >1], col="orange", pch=19, cex=0.5)
+
+points(dat1$diff[dat1$diff > 1 & dat1$logpvalue >1], dat1$logpvalue[dat1$diff > 1 & dat1$logpvalue >1], col="orange", pch=19, cex=0.5)
+
+
+abline(v=-1, col="black")
+abline(v=1, col="black")
+abline(h=1, col="red")
+
+## also subset out the top candidates in the following
+
+dat1.1 = subset(dat1, dat1$diff > 1 & dat1$logpvalue >1)
+dat1.2 = subset(dat1, dat1$diff < -1 & dat1$logpvalue >1)
+
+dat1.3 = rbind(dat1.1, dat1.2)
+
+dat1.4 = read.csv("top_candidates_og.csv")
+dat1.5 = read.csv("Results4.csv")
+
+dat1.6 = merge(dat1.4, dat1.5, by="ProbeSetID")
+write.csv(dat1.6, "top_candidates_total.csv")
